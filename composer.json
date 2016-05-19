@@ -5,7 +5,8 @@
     "require": {
         "php": ">=5.4.0",
         "yiisoft/yii2": ">=2.0.4",
-        "league/oauth2-server": "^5.0"
+        "league/oauth2-server": "^5.0",
+        "pfdtk/yii2-oauth2": "dev-master@dev"
     },
     "autoload": {
         "psr-4": {
