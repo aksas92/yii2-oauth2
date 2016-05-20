@@ -8,6 +8,9 @@ namespace pfdtk\oauth2\repository;
 
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
+use pfdtk\oauth2\entities\AuthCodeEntity;
+use pfdtk\oauth2\models\AuthCodesModel;
+use pfdtk\oauth2\models\AuthCodeScopesModel;
 
 class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
@@ -18,7 +21,9 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function getNewAuthCode()
     {
+        $authCodeEntity = new AuthCodeEntity();
 
+        return $authCodeEntity;
     }
 
     /**
@@ -28,7 +33,19 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
+        $authCodeModel = new AuthCodesModel();
+        $authCodeModel->id = $authCodeEntity->getIdentifier();
+        $authCodeModel->expire_time = $authCodeEntity->getExpiryDateTime()->getTimestamp();
+        $authCodeModel->user_id = $authCodeEntity->getUserIdentifier();
+        $authCodeModel->client_id = $authCodeEntity->getClient()->getIdentifier();
+        $authCodeModel->save();
 
+        foreach ($authCodeEntity->getScopes() as $item) {
+            $accessTokenScopesModel = new AuthCodeScopesModel();
+            $accessTokenScopesModel->auth_code_id = $authCodeModel->id;
+            $accessTokenScopesModel->scope_id = $item->getIdentifier();
+            $accessTokenScopesModel->save();
+        }
     }
 
     /**
@@ -38,7 +55,9 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function revokeAuthCode($codeId)
     {
-
+        /** @var \yii\db\ActiveRecord $obj */
+        $obj = AuthCodesModel::findOne(['id' => $codeId]);
+        $obj->delete();
     }
 
     /**
@@ -50,6 +69,6 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function isAuthCodeRevoked($codeId)
     {
-
+        return !AuthCodesModel::findOne(['id' => $codeId]);
     }
 }

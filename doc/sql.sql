@@ -75,7 +75,9 @@ CREATE TABLE `oauth_access_tokens` (
   `client_id` varchar(40) NOT NULL,
   `created_at` int NOT NULL,
   `updated_at` int NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `client_id` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci;
 
 CREATE TABLE `oauth_access_token_scopes` (
@@ -108,4 +110,28 @@ CREATE TABLE `oauth_user_scopes` (
   `updated_at`  int NOT NULL ,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id_scope_id` (`user_id`,`scope_id`)
+) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci;
+
+
+CREATE TABLE `oauth_auth_codes` (
+  `id` varchar(255) NOT NULL,
+  `user_id` varchar(255) NOT NULL,
+  `client_id` varchar(40) NOT NULL,
+  `expire_time` int NOT NULL,
+  `created_at` int NOT NULL,
+  `updated_at` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `client_id` (`client_id`)
+) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci;
+
+CREATE TABLE `oauth_auth_code_scopes` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `auth_code_id` varchar(255) NOT NULL,
+  `scope_id` varchar(40) NOT NULL,
+  `created_at` int NOT NULL,
+  `updated_at` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `auth_code_id` (`auth_code_id`),
+  KEY `scope_id` (`scope_id`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci;

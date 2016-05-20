@@ -12,7 +12,6 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
 use pfdtk\oauth2\entities\AccessTokenEntity;
 use pfdtk\oauth2\models\AccessTokensModel;
 use pfdtk\oauth2\models\AccessTokenScopesModel;
-use pfdtk\oauth2\models\RefreshTokensModel;
 
 class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
@@ -67,7 +66,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     public function revokeAccessToken($tokenId)
     {
         /** @var \yii\db\ActiveRecord $obj */
-        $obj = RefreshTokensModel::findOne(['id' => $tokenId]);
+        $obj = AccessTokensModel::findOne(['id' => $tokenId]);
         $obj->delete();
     }
 
@@ -80,6 +79,6 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function isAccessTokenRevoked($tokenId)
     {
-        return !RefreshTokensModel::findOne(['id' => $tokenId]);
+        return !AccessTokensModel::findOne(['id' => $tokenId]);
     }
 }
