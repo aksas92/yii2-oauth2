@@ -8,6 +8,7 @@ namespace pfdtk\oauth2\repository;
 
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use pfdtk\oauth2\models\ClientModel;
+use pfdtk\oauth2\entities\ClientEntity;
 
 class ClientRepository implements ClientRepositoryInterface
 {
@@ -26,16 +27,27 @@ class ClientRepository implements ClientRepositoryInterface
         ClientModel::findByGrantType($grantType, $query);
 
         if ($mustValidateSecret) {
-            if ($clientSecret) {
-                ClientModel::findBySecret($clientSecret, $query);
-            } else {
-                return false;
-            }
+            if (!$clientSecret) return false;
+            ClientModel::findBySecret($clientSecret, $query);
         }
 
-        $result = $query->one();
+        if (!$result = $query->one()) {
+            return false;
+        }
 
-        
+        return $this->prepareClientEntity($result);
+    }
 
+    /**
+     * @param $result
+     * @return \League\OAuth2\Server\Entities\ClientEntityInterface
+     */
+    private function prepareClientEntity($result)
+    {
+        $clientEntity = new ClientEntity();
+        $clientEntity->setIdentifier($result->id);
+        $clientEntity->setName($result->name);
+        $clientEntity->setRedirectUri($result->clientProfile->redirect_uri);
+        return $clientEntity;
     }
 }

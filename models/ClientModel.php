@@ -28,6 +28,14 @@ class ClientModel extends CommonModel
     }
 
     /**
+     * @return ActiveQuery
+     */
+    public function getClientProfile()
+    {
+        return $this->hasOne(ClientProfileModel::className(), ['client_id' => 'id']);
+    }
+
+    /**
      * @param $clientIdentifier
      * @param ActiveQuery|null $query
      * @return ActiveQuery

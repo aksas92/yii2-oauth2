@@ -9,6 +9,7 @@ namespace pfdtk\oauth2\models;
 use Yii;
 use yii\db\ActiveRecord;
 use pfdtk\oauth2\config\ConfigInterface;
+use yii\behaviors\TimestampBehavior;
 
 class CommonModel extends ActiveRecord
 {
@@ -19,6 +20,22 @@ class CommonModel extends ActiveRecord
     {
         $db = Yii::$container->get(ConfigInterface::class)->get('db');
         return Yii::$app->get($db);
+    }
+
+    /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+            ],
+        ];
     }
 
 }

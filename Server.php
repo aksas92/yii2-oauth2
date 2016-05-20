@@ -59,7 +59,14 @@ class Server extends Component
      */
     public function handle()
     {
-        ( new \pfdtk\oauth2\repository\ClientRepository())->getClientEntity('asdf123123', 'authorization_code', 'adfasdf123123123', true);
+        $bb = ( new \pfdtk\oauth2\repository\ClientRepository())->getClientEntity('asdf123123', 'authorization_code', 'adfasdf123123123', true);
+        var_dump($bb);
+
+        $aa = ( new \pfdtk\oauth2\repository\ScopeRepository());
+        var_dump($aa->getScopeEntityByIdentifier('scopes_1'));
+        //var_dump($aa->finalizeScopes([], 'authorization_code', $bb, null));
+
+        $cc = ( new \pfdtk\oauth2\repository\AccessTokenRepository());
         return 1;
     }
 
