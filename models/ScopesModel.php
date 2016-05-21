@@ -20,6 +20,18 @@ class ScopesModel extends CommonModel
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['id', 'description'], 'required'],
+            [['id'], 'string', 'max' => 40],
+            [['description'], 'string', 'max' => 255],
+        ];
+    }
+
+    /**
      * @param $identifier
      * @param ActiveQuery|null $query
      * @return ActiveQuery

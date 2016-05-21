@@ -60,4 +60,22 @@ class ScopeRepository implements ScopeRepositoryInterface
         
         return $entitys;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addNewScope($scopeId, $description)
+    {
+        $scope = new ScopesModel();
+        $scope->id = $scopeId;
+        $scope->description = $description;
+        if ($scope->save()) {
+            $scopeEntity = new ScopeEntity();
+            $scopeEntity->setIdentifier($scopeId);
+            return $scopeEntity;
+        }
+        return false;
+    }
+
+
 }

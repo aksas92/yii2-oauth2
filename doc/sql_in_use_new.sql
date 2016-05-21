@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50616
 File Encoding         : 65001
 
-Date: 2016-05-21 12:43:40
+Date: 2016-05-22 00:41:42
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -122,7 +122,7 @@ CREATE TABLE `pre_oauth_client_grants` (
   PRIMARY KEY (`id`),
   KEY `client_id` (`client_id`),
   KEY `grant_id` (`grant_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of pre_oauth_client_grants
@@ -140,7 +140,7 @@ CREATE TABLE `pre_oauth_client_profile` (
   `updated_at` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `client_id` (`client_id`,`redirect_uri`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of pre_oauth_client_profile
@@ -159,7 +159,7 @@ CREATE TABLE `pre_oauth_client_scopes` (
   PRIMARY KEY (`id`),
   KEY `client_id` (`client_id`),
   KEY `scope_id` (`scope_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of pre_oauth_client_scopes
@@ -193,7 +193,7 @@ CREATE TABLE `pre_oauth_grant_scopes` (
   PRIMARY KEY (`id`),
   KEY `grant_id` (`grant_id`),
   KEY `scope_id` (`scope_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of pre_oauth_grant_scopes
