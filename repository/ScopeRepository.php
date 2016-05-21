@@ -36,15 +36,28 @@ class ScopeRepository implements ScopeRepositoryInterface
      */
     public function finalizeScopes(array $scopes, $grantType, ClientEntityInterface $clientEntity, $userIdentifier = null)
     {
-        foreach ($scopes as $key => $item) {
-            $query = ScopesModel::findByScopeId($item->getIdentifier());
-            ScopesModel::findByGrantId($grantType, $query);
-            ScopesModel::findByClientId($clientEntity->getIdentifier(), $query);
-            if ($userIdentifier) {
-                ScopesModel::findByUserId($userIdentifier, $query);
-            }
-            if (!$query->one()) unset($scopes[$key]);
+        $scopesId = [];
+        foreach ($scopes as $item) {
+            $scopesId[] = $item->getIdentifier();
         }
-        return $scopes;
+
+        $query = ScopesModel::findByScopeId($scopesId);
+        ScopesModel::findByGrantId($grantType, $query);
+        ScopesModel::findByClientId($clientEntity->getIdentifier(), $query);
+
+        if ($userIdentifier) {
+            ScopesModel::findByUserId($userIdentifier, $query);
+        }
+
+        $result = $query->all();
+
+        $entitys = [];
+        foreach ($result as $item) {
+            foreach ($scopes as $key => $scope) {
+                if ($item->id == $scope->getIdentifier()) $entitys[$key] = $scope;
+            }
+        }
+        
+        return $entitys;
     }
 }

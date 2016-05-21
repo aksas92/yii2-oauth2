@@ -9,7 +9,7 @@ namespace pfdtk\oauth2\credentials;
 interface UserInterface
 {
     /**
-     * {@inheritdoc}
+     * @return \pfdtk\oauth2\entities\UserEntity
      */
     public function checkUserCredentials($username, $password);
 }
