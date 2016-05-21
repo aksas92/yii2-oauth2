@@ -10,6 +10,7 @@ use Yii;
 use yii\base\Component;
 use pfdtk\oauth2\config\ConfigInterface;
 use pfdtk\oauth2\config\Config;
+use pfdtk\oauth2\credentials\UserInterface;
 
 class Server extends Component
 {
@@ -23,7 +24,8 @@ class Server extends Component
      *
      * $config = [
      *      'db' => 'default',
-     *      'grant_type' => '',
+     *      'grant_type' => 'authorization_code',
+     *      'userModel' => 'app\models\User',
      * ];
      *
      * @param array $config
@@ -77,8 +79,10 @@ class Server extends Component
      */
     private function bindContainer()
     {
+        $config = $this->getConfig();
         $container = Yii::$container;
         $container->setSingleton(ConfigInterface::class, Config::class);
+        $container->setSingleton(UserInterface::class, $config['userModel']);
     }
 
     /**
