@@ -60,7 +60,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     {
         /** @var \yii\db\ActiveRecord $obj */
         $obj = AccessTokensModel::findOne(['id' => $tokenId]);
-        $obj->delete();
+        if ($obj) $obj->delete();
     }
 
     /**
@@ -72,6 +72,6 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function isAccessTokenRevoked($tokenId)
     {
-        return !AccessTokensModel::findOne(['id' => $tokenId]);
+        return !AccessTokensModel::findOne(['id' => $tokenId]) ? true : false;
     }
 }

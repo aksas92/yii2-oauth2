@@ -55,7 +55,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     {
         /** @var \yii\db\ActiveRecord $obj */
         $obj = AuthCodesModel::findOne(['id' => $codeId]);
-        $obj->delete();
+        if ($obj) $obj->delete();
     }
 
     /**
@@ -67,6 +67,6 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function isAuthCodeRevoked($codeId)
     {
-        return !AuthCodesModel::findOne(['id' => $codeId]);
+        return !AuthCodesModel::findOne(['id' => $codeId]) ? true : false;
     }
 }

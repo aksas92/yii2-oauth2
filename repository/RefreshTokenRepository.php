@@ -32,7 +32,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     {
         /** @var \yii\db\ActiveRecord $obj */
         $obj = RefreshTokensModel::findOne(['id' => $tokenId]);
-        $obj->delete();
+        if ($obj) $obj->delete();
     }
 
     /**
@@ -40,7 +40,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function isRefreshTokenRevoked($tokenId)
     {
-        return !RefreshTokensModel::findOne(['id' => $tokenId]);
+        return !RefreshTokensModel::findOne(['id' => $tokenId]) ? true : false;
     }
     
     /**
