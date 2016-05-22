@@ -62,19 +62,24 @@ class ScopeRepository implements ScopeRepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $scopeId
+     * @param string $description
+     * @return blooean
      */
-    public function addNewScope($scopeId, $description)
+    public function addNewScope($identifier, $description)
     {
         $scope = new ScopesModel();
-        $scope->id = $scopeId;
+        $scope->id = $identifier;
         $scope->description = $description;
-        if ($scope->save()) {
-            $scopeEntity = new ScopeEntity();
-            $scopeEntity->setIdentifier($scopeId);
-            return $scopeEntity;
-        }
-        return false;
+        return $scope->save();
+    }
+
+    /**
+     * @param string $identifier
+     */
+    public function removeScope($identifier)
+    {
+
     }
 
 

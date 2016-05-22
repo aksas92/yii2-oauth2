@@ -50,4 +50,64 @@ class ClientRepository implements ClientRepositoryInterface
         $clientEntity->setRedirectUri($result->clientProfile->redirect_uri);
         return $clientEntity;
     }
+
+    /**
+     * @param string $identifier
+     * @param string $secret
+     * @param string $name
+     * @param string $redirectUri
+     */
+    public function addNewClient($identifier, $secret, $name, $redirectUri)
+    {
+
+    }
+
+    /**
+     * case:
+     *
+     * $data = [
+     *     'clientIdentifier1' => 'grantIdentifier1',
+     *     'clientIdentifier2' => 'grantIdentifier2'
+     * ]
+     * 
+     * @param  array $data
+     */
+    public function bindClientGrant(array $data)
+    {
+
+    }
+
+    /**
+     * @param  string $identifier
+     * @param  string $grant|null
+     */
+    public function removeClientGrant($identifier, $grant = null)
+    {
+
+    }
+
+    /**
+     * case:
+     *
+     * $data = [
+     *     'clientIdentifier1' => 'scopeIdentifier1',
+     *     'clientIdentifier2' => 'scopeIdentifier2'
+     * ]
+     * 
+     * @param  array $data
+     */
+    public function bindClientScope(array $data)
+    {
+
+    }
+
+    /**
+     * @param  string $identifier
+     * @param  string $scope|null
+     */
+    public function removeClientScope($identifier, $scope = null)
+    {
+
+    }
+
 }

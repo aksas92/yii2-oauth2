@@ -35,4 +35,77 @@ class UserRepository implements UserRepositoryInterface
 
         return $userEntity;
     }
+
+    /**
+     * case:
+     *
+     * $data = [
+     *     'UserIdentifier1' => 'ClientIdentifier1',
+     *     'UserIdentifier2' => 'ClientIdentifier2'
+     * ]
+     * 
+     * @param  array $data
+     */
+    public function bindUserClient(array $data)
+    {
+
+    }
+
+    /**
+     * @param  string $identifier
+     * @param  string $client|null
+     */
+    public function removeUserClient($identifier, $client = null)
+    {
+
+    }
+
+    /**
+     * case:
+     *
+     * $data = [
+     *     'UserIdentifier1' => 'grantIdentifier1',
+     *     'UserIdentifier2' => 'grantIdentifier2'
+     * ]
+     * 
+     * @param  array $data
+     */
+    public function bindUserGrant(array $data)
+    {
+
+    }
+
+    /**
+     * @param  string $identifier
+     * @param  string $grant|null
+     */
+    public function removeUserGrant($identifier, $grant = null)
+    {
+
+    }
+
+    /**
+     * case:
+     *
+     * $data = [
+     *     'UserIdentifier1' => 'scopeIdentifier1',
+     *     'UserIdentifier2' => 'scopeIdentifier2'
+     * ]
+     * 
+     * @param  array $data
+     */
+    public function bindUserScope(array $data)
+    {
+
+    }
+
+    /**
+     * @param  string $identifier
+     * @param  string $scope|null
+     */
+    public function removeUserScope($identifier, $scope = null)
+    {
+
+    }
+
 }
