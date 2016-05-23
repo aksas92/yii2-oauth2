@@ -16,6 +16,4 @@ class AccessTokenEntity implements AccessTokenEntityInterface
     use AccessTokenTrait;
     use EntityTrait;
     use TokenEntityTrait;
-
-
 }

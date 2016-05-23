@@ -7,6 +7,9 @@
 namespace pfdtk\oauth2\repository;
 
 use pfdtk\oauth2\models\GrantsModel;
+use pfdtk\oauth2\models\ScopesModel;
+use pfdtk\oauth2\models\GrantScopesModel;
+use yii\helpers\ArrayHelper;
 
 class GrantRepository
 {
@@ -51,20 +54,47 @@ class GrantRepository
      * ]
      *
      * @param  array $data
+     * @return boolean
      */
     public function bindGrantScope(array $data)
     {
+        $grantIdentifiers = array_keys($data);
+        $scopeIdentifiers = array_values($data);
 
+        $grantsInDb = ArrayHelper::getColumn(GrantsModel::findByGrantId($grantIdentifiers)->all(), 'id');
+        $scopesInDb = ArrayHelper::getColumn(ScopesModel::findByScopeId($scopeIdentifiers)->all(), 'id');
+
+        if (count(array_diff($grantIdentifiers, $grantsInDb)) !== 0
+            or count(array_diff($scopeIdentifiers, $scopesInDb)) !== 0
+        ) {
+            return false;
+        }
+
+        foreach ($data as $grant => $scope) {
+            $clientGrantModel = new GrantScopesModel();
+            $clientGrantModel->grant_id = $grant;
+            $clientGrantModel->scope_id = $scope;
+            $clientGrantModel->save();
+        }
+
+        return true;
     }
 
     /**
-     * @param  string $identifier
+     * @param  string $grantIdentifier
      * @param  string $scope |null
      */
-    public function removeGrantScope($identifier, $scope = null)
+    public function removeGrantScope($grantIdentifier, $scope = null)
     {
+        $condition = ['grant_id' => $grantIdentifier];
+        if ($scope) {
+            $condition['scope_id'] = $scope;
+        }
+        $scopes = GrantScopesModel::findAll($condition);
 
+        foreach ($scopes as $scope) {
+            $scope->delete();
+        }
     }
-
 
 }

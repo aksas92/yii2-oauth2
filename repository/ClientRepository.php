@@ -113,7 +113,7 @@ class ClientRepository implements ClientRepositoryInterface
      */
     public function removeClientGrant($clientIdentifier, $grant = null)
     {
-        $condition = ['id' => $clientIdentifier];
+        $condition = ['client_id' => $clientIdentifier];
         if ($grant) {
             $condition['grant_id'] = $grant;
         }
@@ -165,7 +165,7 @@ class ClientRepository implements ClientRepositoryInterface
      */
     public function removeClientScope($clientIdentifier, $scope = null)
     {
-        $condition = ['id' => $clientIdentifier];
+        $condition = ['client_id' => $clientIdentifier];
         if ($scope) {
             $condition['scope_id'] = $scope;
         }
