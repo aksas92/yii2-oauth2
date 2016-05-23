@@ -9,6 +9,7 @@ namespace pfdtk\oauth2\repository;
 use pfdtk\oauth2\models\GrantsModel;
 use pfdtk\oauth2\models\ScopesModel;
 use pfdtk\oauth2\models\GrantScopesModel;
+use pfdtk\oauth2\models\CommonModel;
 use yii\helpers\ArrayHelper;
 
 class GrantRepository
@@ -38,10 +39,20 @@ class GrantRepository
      */
     public function initGrant()
     {
-        foreach (self::$grants as $item) {
-            $model = new GrantsModel();
-            $model->id = $item;
-            $model->save();
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
+
+        try {
+            foreach (self::$grants as $item) {
+                $model = new GrantsModel();
+                $model->id = $item;
+                $model->save();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
         }
     }
 
@@ -70,19 +81,28 @@ class GrantRepository
             return false;
         }
 
-        foreach ($data as $grant => $scope) {
-            $clientGrantModel = new GrantScopesModel();
-            $clientGrantModel->grant_id = $grant;
-            $clientGrantModel->scope_id = $scope;
-            $clientGrantModel->save();
-        }
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
 
-        return true;
+        try {
+            foreach ($data as $grant => $scope) {
+                $clientGrantModel = new GrantScopesModel();
+                $clientGrantModel->grant_id = $grant;
+                $clientGrantModel->scope_id = $scope;
+                $clientGrantModel->save();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
+        }
     }
 
     /**
      * @param  string $grantIdentifier
      * @param  string $scope |null
+     * @return boolean
      */
     public function removeGrantScope($grantIdentifier, $scope = null)
     {
@@ -92,8 +112,18 @@ class GrantRepository
         }
         $scopes = GrantScopesModel::findAll($condition);
 
-        foreach ($scopes as $scope) {
-            $scope->delete();
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
+
+        try {
+            foreach ($scopes as $scope) {
+                $scope->delete();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
         }
     }
 

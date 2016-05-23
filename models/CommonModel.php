@@ -10,7 +10,6 @@ use Yii;
 use yii\db\ActiveRecord;
 use pfdtk\oauth2\config\ConfigInterface;
 use yii\behaviors\TimestampBehavior;
-use pfdtk\oauth2\models\behaviors\TransactionBehavior;
 
 class CommonModel extends ActiveRecord
 {
@@ -29,7 +28,6 @@ class CommonModel extends ActiveRecord
     public function behaviors()
     {
         return [
-            TransactionBehavior::className(),
             'timestamp' => [
                 'class' => TimestampBehavior::className(),
                 'attributes' => [

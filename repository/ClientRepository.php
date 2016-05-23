@@ -13,6 +13,7 @@ use pfdtk\oauth2\models\ScopesModel;
 use pfdtk\oauth2\models\ClientProfileModel;
 use pfdtk\oauth2\models\ClientGrantsModel;
 use pfdtk\oauth2\models\ClientScopesModel;
+use pfdtk\oauth2\models\CommonModel;
 use pfdtk\oauth2\entities\ClientEntity;
 use yii\helpers\ArrayHelper;
 
@@ -45,6 +46,7 @@ class ClientRepository implements ClientRepositoryInterface
         $clientEntity->setIdentifier($result->id);
         $clientEntity->setName($result->name);
         $clientEntity->setRedirectUri($result->clientProfile->redirect_uri);
+
         return $clientEntity;
     }
 
@@ -53,23 +55,31 @@ class ClientRepository implements ClientRepositoryInterface
      * @param string $secret
      * @param string $name
      * @param string $redirectUri
-     * @return mixed
+     * @return boolean
      */
     public function addNewClient($identifier, $secret, $name, $redirectUri)
     {
-        $clientModel = new ClientModel();
-        $clientModel->id = $identifier;
-        $clientModel->secret = $secret;
-        $clientModel->name = $name;
-        if (!$clientModel->save()) {
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
+
+        try {
+            $clientModel = new ClientModel();
+            $clientModel->id = $identifier;
+            $clientModel->secret = $secret;
+            $clientModel->name = $name;
+            if (!$clientModel->save()) return false;
+
+            $clientProfile = new ClientProfileModel();
+            $clientProfile->client_id = $clientModel->id;
+            $clientProfile->redirect_uri = $redirectUri;
+            $clientProfile->save();
+
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
             return false;
         }
-
-        $clientProfile = new ClientProfileModel();
-        $clientProfile->client_id = $clientModel->id;
-        $clientProfile->redirect_uri = $redirectUri;
-
-        return $clientProfile->save();
     }
 
     /**
@@ -97,19 +107,28 @@ class ClientRepository implements ClientRepositoryInterface
             return false;
         }
 
-        foreach ($data as $client => $grant) {
-            $clientGrantModel = new ClientGrantsModel();
-            $clientGrantModel->client_id = $client;
-            $clientGrantModel->grant_id = $grant;
-            $clientGrantModel->save();
-        }
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
 
-        return true;
+        try {
+            foreach ($data as $client => $grant) {
+                $clientGrantModel = new ClientGrantsModel();
+                $clientGrantModel->client_id = $client;
+                $clientGrantModel->grant_id = $grant;
+                $clientGrantModel->save();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
+        }
     }
 
     /**
      * @param  string $clientIdentifier
      * @param  string $grant |null
+     * @return boolean
      */
     public function removeClientGrant($clientIdentifier, $grant = null)
     {
@@ -119,8 +138,18 @@ class ClientRepository implements ClientRepositoryInterface
         }
         $grants = ClientGrantsModel::findAll($condition);
 
-        foreach ($grants as $grant) {
-            $grant->delete();
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
+
+        try {
+            foreach ($grants as $grant) {
+                $grant->delete();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
         }
     }
 
@@ -149,19 +178,28 @@ class ClientRepository implements ClientRepositoryInterface
             return false;
         }
 
-        foreach ($data as $client => $scope) {
-            $clientScopeModel = new ClientScopesModel();
-            $clientScopeModel->client_id = $client;
-            $clientScopeModel->grant_id = $scope;
-            $clientScopeModel->save();
-        }
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
 
-        return true;
+        try {
+            foreach ($data as $client => $scope) {
+                $clientScopeModel = new ClientScopesModel();
+                $clientScopeModel->client_id = $client;
+                $clientScopeModel->grant_id = $scope;
+                $clientScopeModel->save();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
+        }
     }
 
     /**
      * @param  string $clientIdentifier
      * @param  string $scope |null
+     * @return boolean
      */
     public function removeClientScope($clientIdentifier, $scope = null)
     {
@@ -171,8 +209,18 @@ class ClientRepository implements ClientRepositoryInterface
         }
         $scopes = ClientScopesModel::findAll($condition);
 
-        foreach ($scopes as $scope) {
-            $scope->delete();
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
+
+        try {
+            foreach ($scopes as $scope) {
+                $scope->delete();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
         }
     }
 

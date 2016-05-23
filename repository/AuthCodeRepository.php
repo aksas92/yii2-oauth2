@@ -11,6 +11,7 @@ use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use pfdtk\oauth2\entities\AuthCodeEntity;
 use pfdtk\oauth2\models\AuthCodesModel;
 use pfdtk\oauth2\models\AuthCodeScopesModel;
+use pfdtk\oauth2\models\CommonModel;
 
 class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
@@ -32,23 +33,30 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
-        $authCodeModel = new AuthCodesModel();
-        $authCodeModel->id = $authCodeEntity->getIdentifier();
-        $authCodeModel->expire_time = $authCodeEntity->getExpiryDateTime()->getTimestamp();
-        $authCodeModel->user_id = $authCodeEntity->getUserIdentifier();
-        $authCodeModel->client_id = $authCodeEntity->getClient()->getIdentifier();
-        if (!$authCodeModel->save()) {
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
+
+        try {
+            $authCodeModel = new AuthCodesModel();
+            $authCodeModel->id = $authCodeEntity->getIdentifier();
+            $authCodeModel->expire_time = $authCodeEntity->getExpiryDateTime()->getTimestamp();
+            $authCodeModel->user_id = $authCodeEntity->getUserIdentifier();
+            $authCodeModel->client_id = $authCodeEntity->getClient()->getIdentifier();
+            if (!$authCodeModel->save()) return false;
+
+            foreach ($authCodeEntity->getScopes() as $item) {
+                $accessTokenScopesModel = new AuthCodeScopesModel();
+                $accessTokenScopesModel->auth_code_id = $authCodeModel->id;
+                $accessTokenScopesModel->scope_id = $item->getIdentifier();
+                $accessTokenScopesModel->save();
+            }
+
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
             return false;
         }
-
-        foreach ($authCodeEntity->getScopes() as $item) {
-            $accessTokenScopesModel = new AuthCodeScopesModel();
-            $accessTokenScopesModel->auth_code_id = $authCodeModel->id;
-            $accessTokenScopesModel->scope_id = $item->getIdentifier();
-            $accessTokenScopesModel->save();
-        }
-
-        return true;
     }
 
     /**

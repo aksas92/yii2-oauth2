@@ -17,6 +17,7 @@ use pfdtk\oauth2\models\ClientModel;
 use pfdtk\oauth2\models\ScopesModel;
 use pfdtk\oauth2\models\UserClientsModel;
 use pfdtk\oauth2\models\UserScopesModel;
+use pfdtk\oauth2\models\CommonModel;
 use yii\helpers\ArrayHelper;
 
 class UserRepository implements UserRepositoryInterface
@@ -63,19 +64,28 @@ class UserRepository implements UserRepositoryInterface
             return false;
         }
 
-        foreach ($data as $user => $client) {
-            $userClientModel = new UserClientsModel();
-            $userClientModel->user_id = $user;
-            $userClientModel->client_id = $client;
-            $userClientModel->save();
-        }
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
 
-        return true;
+        try {
+            foreach ($data as $user => $client) {
+                $userClientModel = new UserClientsModel();
+                $userClientModel->user_id = $user;
+                $userClientModel->client_id = $client;
+                $userClientModel->save();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
+        }
     }
 
     /**
      * @param  string $userIdentifier
      * @param  string $client |null
+     * @return boolean
      */
     public function removeUserClient($userIdentifier, $client = null)
     {
@@ -85,8 +95,18 @@ class UserRepository implements UserRepositoryInterface
         }
         $clients = UserClientsModel::findAll($condition);
 
-        foreach ($clients as $client) {
-            $client->delete();
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
+
+        try {
+            foreach ($clients as $client) {
+                $client->delete();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
         }
     }
 
@@ -111,19 +131,28 @@ class UserRepository implements UserRepositoryInterface
             return false;
         }
 
-        foreach ($data as $user => $grant) {
-            $userGrantsModel = new UserGrantsModel();
-            $userGrantsModel->user_id = $user;
-            $userGrantsModel->grant_id = $grant;
-            $userGrantsModel->save();
-        }
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
 
-        return true;
+        try {
+            foreach ($data as $user => $grant) {
+                $userGrantsModel = new UserGrantsModel();
+                $userGrantsModel->user_id = $user;
+                $userGrantsModel->grant_id = $grant;
+                $userGrantsModel->save();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
+        }
     }
 
     /**
      * @param  string $userIdentifier
      * @param  string $grant |null
+     * @return boolean
      */
     public function removeUserGrant($userIdentifier, $grant = null)
     {
@@ -133,8 +162,18 @@ class UserRepository implements UserRepositoryInterface
         }
         $grants = UserGrantsModel::findAll($condition);
 
-        foreach ($grants as $grant) {
-            $grant->delete();
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
+
+        try {
+            foreach ($grants as $grant) {
+                $grant->delete();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
         }
     }
 
@@ -159,19 +198,28 @@ class UserRepository implements UserRepositoryInterface
             return false;
         }
 
-        foreach ($data as $user => $sope) {
-            $userScopesModel = new UserScopesModel();
-            $userScopesModel->user_id = $user;
-            $userScopesModel->scope_id = $sope;
-            $userScopesModel->save();
-        }
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
 
-        return true;
+        try {
+            foreach ($data as $user => $sope) {
+                $userScopesModel = new UserScopesModel();
+                $userScopesModel->user_id = $user;
+                $userScopesModel->scope_id = $sope;
+                $userScopesModel->save();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
+        }
     }
 
     /**
      * @param  string $userIdentifier
      * @param  string $scope |null
+     * @return boolean
      */
     public function removeUserScope($userIdentifier, $scope = null)
     {
@@ -181,8 +229,18 @@ class UserRepository implements UserRepositoryInterface
         }
         $scopes = UserScopesModel::findAll($condition);
 
-        foreach ($scopes as $scope) {
-            $scope->delete();
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
+
+        try {
+            foreach ($scopes as $scope) {
+                $scope->delete();
+            }
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            return false;
         }
     }
 

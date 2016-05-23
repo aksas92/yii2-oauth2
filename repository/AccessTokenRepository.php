@@ -12,6 +12,7 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
 use pfdtk\oauth2\entities\AccessTokenEntity;
 use pfdtk\oauth2\models\AccessTokensModel;
 use pfdtk\oauth2\models\AccessTokenScopesModel;
+use pfdtk\oauth2\models\CommonModel;
 
 class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
@@ -37,23 +38,30 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
-        $accessTokenModel = new AccessTokensModel();
-        $accessTokenModel->id = $accessTokenEntity->getIdentifier();
-        $accessTokenModel->expire_time = $accessTokenEntity->getExpiryDateTime()->getTimestamp();
-        $accessTokenModel->user_id = $accessTokenEntity->getUserIdentifier();
-        $accessTokenModel->client_id = $accessTokenEntity->getClient()->getIdentifier();
-        if (!$accessTokenModel->save()) {
+        $db = CommonModel::getDb();
+        $transaction = $db->beginTransaction();
+
+        try {
+            $accessTokenModel = new AccessTokensModel();
+            $accessTokenModel->id = $accessTokenEntity->getIdentifier();
+            $accessTokenModel->expire_time = $accessTokenEntity->getExpiryDateTime()->getTimestamp();
+            $accessTokenModel->user_id = $accessTokenEntity->getUserIdentifier();
+            $accessTokenModel->client_id = $accessTokenEntity->getClient()->getIdentifier();
+            if (!$accessTokenModel->save()) return false;
+
+            foreach ($accessTokenEntity->getScopes() as $item) {
+                $accessTokenScopesModel = new AccessTokenScopesModel();
+                $accessTokenScopesModel->access_token_id = $accessTokenModel->id;
+                $accessTokenScopesModel->scope_id = $item->getIdentifier();
+                $accessTokenScopesModel->save();
+            }
+
+            $transaction->commit();
+            return true;
+        } catch (\Exception $e) {
+            $transaction->rollBack();
             return false;
         }
-
-        foreach ($accessTokenEntity->getScopes() as $item) {
-            $accessTokenScopesModel = new AccessTokenScopesModel();
-            $accessTokenScopesModel->access_token_id = $accessTokenModel->id;
-            $accessTokenScopesModel->scope_id = $item->getIdentifier();
-            $accessTokenScopesModel->save();
-        }
-
-        return true;
     }
 
     /**
