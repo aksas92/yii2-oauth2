@@ -11,6 +11,7 @@ use yii\base\Component;
 use pfdtk\oauth2\config\ConfigInterface;
 use pfdtk\oauth2\config\Config;
 use pfdtk\oauth2\credentials\UserInterface;
+use pfdtk\oauth2\grant\GrantInterface;
 
 class Server extends Component
 {
@@ -24,8 +25,13 @@ class Server extends Component
      *
      * $config = [
      *      'db' => 'default',
-     *      'grant_type' => 'authorization_code',
+     *      'grant_type' => 'pfdtk\oauth2\grant\AuthorizationCode',
      *      'userModel' => 'app\models\User',
+     *      'privateKeyPath' => 'path/to/privatekey',
+     *      'publicKeyPath' => 'path/to/publickey',
+     *      'refreshTokenTTL ' => 'P1M', //see DateInterval for detail
+     *      'codeTTL ' => 'PT10M', //see DateInterval for detail
+     *      'accessTokenTTL ' => 'PT1H', //see DateInterval for detail
      * ];
      *
      * @param array $config
@@ -61,15 +67,8 @@ class Server extends Component
      */
     public function handle()
     {
-        $bb = (new \pfdtk\oauth2\repository\ClientRepository())->getClientEntity('asdf123123', 'authorization_code', 'adfasdf123123123', true);
-        var_dump($bb);
-
-        $aa = (new \pfdtk\oauth2\repository\ScopeRepository());
-        var_dump($aa->getScopeEntityByIdentifier('scopes_1'));
-        //var_dump($aa->finalizeScopes([], 'authorization_code', $bb, null));
-
-        //$cc = (new \pfdtk\oauth2\repository\AccessTokenRepository());
-        return 1;
+        $grant = Yii::$container->get(GrantInterface::class);
+        return $grant->handle();
     }
 
     /**
@@ -188,6 +187,7 @@ class Server extends Component
         $container = Yii::$container;
         $container->setSingleton(ConfigInterface::class, Config::class);
         $container->setSingleton(UserInterface::class, $config['userModel']);
+        $container->setSingleton(GrantInterface::class, $config['grant_type']);
     }
 
     /**
