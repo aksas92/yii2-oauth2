@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50621
 File Encoding         : 65001
 
-Date: 2016-05-20 19:06:47
+Date: 2016-05-23 10:08:57
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -88,7 +88,7 @@ CREATE TABLE `pre_oauth_client_grants` (
   PRIMARY KEY (`id`),
   KEY `client_id` (`client_id`),
   KEY `grant_id` (`grant_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for pre_oauth_client_profile
@@ -102,7 +102,7 @@ CREATE TABLE `pre_oauth_client_profile` (
   `updated_at` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `client_id` (`client_id`,`redirect_uri`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for pre_oauth_client_scopes
@@ -117,7 +117,7 @@ CREATE TABLE `pre_oauth_client_scopes` (
   PRIMARY KEY (`id`),
   KEY `client_id` (`client_id`),
   KEY `scope_id` (`scope_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for pre_oauth_clients
@@ -146,7 +146,7 @@ CREATE TABLE `pre_oauth_grant_scopes` (
   PRIMARY KEY (`id`),
   KEY `grant_id` (`grant_id`),
   KEY `scope_id` (`scope_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for pre_oauth_grants
@@ -186,13 +186,41 @@ CREATE TABLE `pre_oauth_scopes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Table structure for pre_oauth_user_clients
+-- ----------------------------
+DROP TABLE IF EXISTS `pre_oauth_user_clients`;
+CREATE TABLE `pre_oauth_user_clients` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(255) NOT NULL,
+  `client_id` varchar(40) NOT NULL,
+  `created_at` int(11) NOT NULL,
+  `updated_at` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id_client_id` (`user_id`,`client_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for pre_oauth_user_grants
+-- ----------------------------
+DROP TABLE IF EXISTS `pre_oauth_user_grants`;
+CREATE TABLE `pre_oauth_user_grants` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` varchar(255) NOT NULL,
+  `grant_id` varchar(40) NOT NULL,
+  `created_at` int(11) NOT NULL,
+  `updated_at` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id_grant_id` (`user_id`,`grant_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
 -- Table structure for pre_oauth_user_scopes
 -- ----------------------------
 DROP TABLE IF EXISTS `pre_oauth_user_scopes`;
 CREATE TABLE `pre_oauth_user_scopes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `scope_id` varchar(40) CHARACTER SET latin1 NOT NULL,
+  `user_id` varchar(255) NOT NULL,
+  `scope_id` varchar(40) NOT NULL,
   `created_at` int(11) NOT NULL,
   `updated_at` int(11) NOT NULL,
   PRIMARY KEY (`id`),

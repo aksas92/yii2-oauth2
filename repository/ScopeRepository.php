@@ -62,9 +62,9 @@ class ScopeRepository implements ScopeRepositoryInterface
     }
 
     /**
-     * @param string $scopeId
+     * @param string $identifier
      * @param string $description
-     * @return blooean
+     * @return boolean
      */
     public function addNewScope($identifier, $description)
     {
@@ -79,7 +79,9 @@ class ScopeRepository implements ScopeRepositoryInterface
      */
     public function removeScope($identifier)
     {
-
+        /** @var \yii\db\ActiveRecord $obj */
+        $obj = ScopesModel::findOne(['id' => $identifier]);
+        if ($obj) $obj->delete();
     }
 
 

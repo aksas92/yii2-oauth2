@@ -20,6 +20,19 @@ class UserClientsModel extends CommonModel
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['user_id', 'client_id'], 'required'],
+            [['user_id'], 'string', 'max' => 255],
+            [['client_id'], 'string', 'max' => 40],
+            [['user_id', 'client_id'], 'unique', 'targetAttribute' => ['user_id', 'client_id'], 'message' => 'The combination of User ID and Client ID has already been taken.'],
+        ];
+    }
+
+    /**
      * @param $userId
      * @param ActiveQuery|null $query
      * @return ActiveQuery

@@ -20,6 +20,17 @@ class ClientGrantsModel extends CommonModel
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['client_id', 'grant_id'], 'required'],
+            [['client_id', 'grant_id'], 'string', 'max' => 40],
+        ];
+    }
+
+    /**
      * @return ActiveQuery
      */
     public function getClient()

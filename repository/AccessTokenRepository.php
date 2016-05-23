@@ -33,6 +33,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      * Persists a new access token to permanent storage.
      *
      * @param \League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessTokenEntity
+     * @return mixed
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
@@ -41,7 +42,9 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
         $accessTokenModel->expire_time = $accessTokenEntity->getExpiryDateTime()->getTimestamp();
         $accessTokenModel->user_id = $accessTokenEntity->getUserIdentifier();
         $accessTokenModel->client_id = $accessTokenEntity->getClient()->getIdentifier();
-        $accessTokenModel->save();
+        if (!$accessTokenModel->save()) {
+            return false;
+        }
 
         foreach ($accessTokenEntity->getScopes() as $item) {
             $accessTokenScopesModel = new AccessTokenScopesModel();
@@ -49,6 +52,8 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
             $accessTokenScopesModel->scope_id = $item->getIdentifier();
             $accessTokenScopesModel->save();
         }
+
+        return true;
     }
 
     /**

@@ -28,6 +28,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      * Persists a new auth code to permanent storage.
      *
      * @param \League\OAuth2\Server\Entities\AuthCodeEntityInterface $authCodeEntity
+     * @return mixed
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
@@ -36,7 +37,9 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
         $authCodeModel->expire_time = $authCodeEntity->getExpiryDateTime()->getTimestamp();
         $authCodeModel->user_id = $authCodeEntity->getUserIdentifier();
         $authCodeModel->client_id = $authCodeEntity->getClient()->getIdentifier();
-        $authCodeModel->save();
+        if (!$authCodeModel->save()) {
+            return false;
+        }
 
         foreach ($authCodeEntity->getScopes() as $item) {
             $accessTokenScopesModel = new AuthCodeScopesModel();
@@ -44,6 +47,8 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
             $accessTokenScopesModel->scope_id = $item->getIdentifier();
             $accessTokenScopesModel->save();
         }
+
+        return true;
     }
 
     /**

@@ -20,6 +20,19 @@ class UserScopesModel extends CommonModel
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['user_id', 'scope_id'], 'required'],
+            [['user_id'], 'string', 'max' => 255],
+            [['scope_id'], 'string', 'max' => 40],
+            [['user_id', 'scope_id'], 'unique', 'targetAttribute' => ['user_id', 'scope_id'], 'message' => 'The combination of User ID and Scope ID has already been taken.'],
+        ];
+    }
+
+    /**
      * @param $userId
      * @param ActiveQuery|null $query
      * @return ActiveQuery

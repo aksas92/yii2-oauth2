@@ -20,6 +20,17 @@ class GrantScopesModel extends CommonModel
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['grant_id', 'scope_id'], 'required'],
+            [['grant_id', 'scope_id'], 'string', 'max' => 40],
+        ];
+    }
+
+    /**
      * @param $grantId
      * @param ActiveQuery|null $query
      * @return ActiveQuery

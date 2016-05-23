@@ -20,6 +20,17 @@ class ClientScopesModel extends CommonModel
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['client_id', 'scope_id'], 'required'],
+            [['client_id', 'scope_id'], 'string', 'max' => 40],
+        ];
+    }
+
+    /**
      * @param $clientId
      * @param ActiveQuery|null $query
      * @return ActiveQuery

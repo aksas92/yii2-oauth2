@@ -20,6 +20,19 @@ class ClientModel extends CommonModel
     }
 
     /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['id', 'secret', 'name'], 'required'],
+            [['id', 'secret'], 'string', 'max' => 40],
+            [['name'], 'string', 'max' => 255],
+            [['id', 'secret'], 'unique', 'targetAttribute' => ['id', 'secret'], 'message' => 'The combination of ID and Secret has already been taken.'],
+        ];
+    }
+
+    /**
      * @return ActiveQuery
      */
     public function getClientGrants()

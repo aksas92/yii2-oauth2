@@ -22,6 +22,7 @@ class UserRepository implements UserRepositoryInterface
     public function getUserEntityByUserCredentials($username, $password, $grantType, ClientEntityInterface $clientEntity)
     {
     	$container = Yii::$container;
+        /** @var UserEntity $userEntity */
         $userEntity = $container->get(UserInterface::class)->checkUserCredentials($username, $password);
         if($userEntity instanceof UserEntity === false) {
         	return false;
