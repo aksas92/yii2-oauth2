@@ -76,12 +76,14 @@ class ScopeRepository implements ScopeRepositoryInterface
 
     /**
      * @param string $identifier
+     * @return int
      */
     public function removeScope($identifier)
     {
         /** @var \yii\db\ActiveRecord $obj */
         $obj = ScopesModel::findOne(['id' => $identifier]);
-        if ($obj) $obj->delete();
+        if ($obj) return $obj->delete();
+        return 0;
     }
 
 
