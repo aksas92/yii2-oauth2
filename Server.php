@@ -12,6 +12,7 @@ use pfdtk\oauth2\config\ConfigInterface;
 use pfdtk\oauth2\config\Config;
 use pfdtk\oauth2\credentials\UserInterface;
 use pfdtk\oauth2\grant\GrantInterface;
+use GuzzleHttp\Psr7\ServerRequest;
 
 class Server extends Component
 {
@@ -64,11 +65,23 @@ class Server extends Component
 
     /**
      * handle
+     *
+     * @return GrantInterface
      */
     public function handle()
     {
         $grant = Yii::$container->get(GrantInterface::class);
         return $grant->handle();
+    }
+
+    /**
+     * request
+     *
+     * @return ServerRequest
+     */
+    public function request()
+    {
+        return ServerRequest::fromGlobals();
     }
 
     /**
@@ -169,6 +182,7 @@ class Server extends Component
 
     /**
      * @param $identifier
+     * @return int
      */
     public function removeScope($identifier)
     {
