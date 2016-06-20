@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50621
 File Encoding         : 65001
 
-Date: 2016-06-20 14:37:46
+Date: 2016-06-20 17:21:10
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -88,7 +88,7 @@ CREATE TABLE `pre_oauth_client_grants` (
   PRIMARY KEY (`id`),
   KEY `client_id` (`client_id`),
   KEY `grant_id` (`grant_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for pre_oauth_client_profile
@@ -226,3 +226,17 @@ CREATE TABLE `pre_oauth_user_scopes` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id_scope_id` (`user_id`,`scope_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for pre_users
+-- ----------------------------
+DROP TABLE IF EXISTS `pre_users`;
+CREATE TABLE `pre_users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created_at` int(11) NOT NULL,
+  `updated_at` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `username` (`username`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
