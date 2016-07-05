@@ -40,9 +40,11 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
             $authCodeModel = new AuthCodesModel();
             $authCodeModel->id = $authCodeEntity->getIdentifier();
             $authCodeModel->expire_time = $authCodeEntity->getExpiryDateTime()->getTimestamp();
-            $authCodeModel->user_id = $authCodeEntity->getUserIdentifier();
+            $authCodeModel->user_id = (string) $authCodeEntity->getUserIdentifier();
             $authCodeModel->client_id = $authCodeEntity->getClient()->getIdentifier();
-            if (!$authCodeModel->save()) return false;
+            if (!$authCodeModel->save()) {
+                return false;
+            }
 
             foreach ($authCodeEntity->getScopes() as $item) {
                 $accessTokenScopesModel = new AuthCodeScopesModel();

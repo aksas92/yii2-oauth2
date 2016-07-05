@@ -25,9 +25,9 @@ class AuthCodesModel extends CommonModel
     public function rules()
     {
         return [
-            [['id', 'user_id', 'client_id', 'redirect_uri', 'expire_time'], 'required'],
+            [['id', 'user_id', 'client_id', 'expire_time'], 'required'],
             [['expire_time'], 'integer'],
-            [['id', 'user_id', 'redirect_uri'], 'string', 'max' => 255],
+            [['id', 'user_id'], 'string', 'max' => 255],
             [['client_id'], 'string', 'max' => 40],
         ];
     }
